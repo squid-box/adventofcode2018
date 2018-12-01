@@ -18,6 +18,8 @@
             {
                 Console.WriteLine(problem);
             }
+
+	        Console.In.ReadLine();
         }
     }
 }
