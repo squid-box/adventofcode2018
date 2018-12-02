@@ -10,7 +10,8 @@
         {
             var problems = new List<Problem>
             {
-                new Problem1()
+                new Problem1(),
+				new Problem2()
 
             };
 
