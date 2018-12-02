@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using AdventOfCode2018.Problems;
-
-namespace AdventOfCode2018.Tests.Problems
+﻿namespace AdventOfCode2018.Tests.Problems
 {
+    using System.Collections.Generic;
+    
     using NUnit.Framework;
+
+    using AdventOfCode2018.Problems;
 
     [TestFixture]
     public class Problem1Tests

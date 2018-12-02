@@ -17,6 +17,7 @@
             foreach (var problem in problems)
             {
                 Console.WriteLine(problem);
+                Console.WriteLine();
             }
 
 	        Console.In.ReadLine();

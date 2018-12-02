@@ -2,8 +2,9 @@
 {
 	using System;
 	using System.Collections.Generic;
+	using System.Linq;
 
-	public class Problem1 : Problem
+    public class Problem1 : Problem
     {
         public Problem1() : base(1)
         {
@@ -11,14 +12,7 @@
 
 	    public static int FindResultingFrequency(IEnumerable<string> input)
 	    {
-		    var sum = 0;
-
-			foreach(var i in input)
-			{
-				sum += Convert.ToInt32(i);
-			}
-
-		    return sum;
+	        return input.Sum(i => Convert.ToInt32(i));
 	    }
 
 	    public static int FindFirstRepeatingFrequency(IEnumerable<string> input)
