@@ -48,5 +48,22 @@
 
 			Assert.AreEqual(12, Problem2.FindChecksum(input));
 	    }
+
+        [Test]
+        public void FindCommonLettersTest()
+        {
+            var input = new []
+            {
+                "abcde",
+                "fghij",
+                "klmno",
+                "pqrst",
+                "fguij",
+                "axcye",
+                "wvxyz"
+            };
+
+            Assert.AreEqual("fgij", Problem2.FindCommonLetters(input));
+        }
     }
 }

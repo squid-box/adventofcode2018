@@ -1,14 +1,16 @@
-﻿using System.Collections.Generic;
-
-namespace AdventOfCode2018.Problems
+﻿namespace AdventOfCode2018.Problems
 {
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+
     public class Problem2 : Problem
     {
         public Problem2() : base(2)
         {
         }
 
-	    public static int FindChecksum(IEnumerable<string> input)
+	    public static int FindChecksum(ICollection<string> input)
 	    {
 		    var twoOccurences = 0;
 		    var threeOccurences = 0;
@@ -54,9 +56,46 @@ namespace AdventOfCode2018.Problems
 		    return false;
 	    }
 
+        public static string FindCommonLetters(IList<string> input)
+        {
+            for (var i = 0; i < input.Count-1; i++)
+            {
+                var current = input[i];
+
+                for (var n = i + 1; n < input.Count; n++)
+                {
+                    var comparison = input[n];
+                    var commonLetters = new StringBuilder();
+
+                    var difference = 0;
+
+                    for (var x = 0; x < current.Length; x++)
+                    {
+                        if (current[x].Equals(comparison[x]))
+                        {
+                            commonLetters.Append(current[x]);
+                        }
+                        else
+                        {
+                            difference++;
+                        }
+                    }
+
+                    if (difference >= 2)
+                    {
+                        continue;
+                    }
+
+                    return commonLetters.ToString();
+                }
+            }
+
+            return "Couldn't find it :(";
+        }
+
         public override string Answer()
         {
-	        return $"ID's make the checksum: {FindChecksum(Input)}";
+	        return $"ID's make the checksum: {FindChecksum(Input)}, the common letters are: \"{FindCommonLetters(Input.ToList())}\".";
         }
     }
 }
