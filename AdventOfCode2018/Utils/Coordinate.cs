@@ -16,5 +16,16 @@
         {
             return $"({X},{Y})";
         }
+
+        public override bool Equals(object obj)
+        {
+            var other = (Coordinate) obj;
+            return other.X.Equals(X) && other.Y.Equals(Y);
+        }
+
+        public override int GetHashCode()
+        {
+            return X.GetHashCode() + Y.GetHashCode();
+        }
     }
 }

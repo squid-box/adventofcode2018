@@ -12,100 +12,69 @@
         {
         }
 
-        public static int CountOverlappingSquares(IEnumerable<Claim> input)
+        public static Dictionary<Coordinate, List<Claim>> CreateGrid(IList<Claim> input)
         {
-            var grid = new Dictionary<int, Dictionary<int, HashSet<Claim>>>();
+            var grid = new Dictionary<Coordinate, List<Claim>>();
 
             foreach (var claim in input)
             {
                 for (var x = claim.Start.X; x < claim.Start.X + claim.SizeX; x++)
                 {
-                    if (!grid.ContainsKey(x))
-                    {
-                        grid[x] = new Dictionary<int, HashSet<Claim>>();
-                    }
-
                     for (var y = claim.Start.Y; y < claim.Start.Y + claim.SizeY; y++)
                     {
-                        if (!grid[x].ContainsKey(y))
+                        var coord = new Coordinate(x, y);
+                        if (!grid.ContainsKey(coord))
                         {
-                            grid[x][y] = new HashSet<Claim>();
+                            grid[coord] = new List<Claim>();
                         }
-
-                        grid[x][y].Add(claim);
+                        
+                        grid[coord].Add(claim);
                     }
                 }
             }
 
+            return grid;
+        }
+
+        public static int CountOverlappingSquares(Dictionary<Coordinate, List<Claim>> grid)
+        {
             var overlappingSquares = 0;
 
-            foreach (var x in grid.Keys)
+            foreach (var square in grid)
             {
-                foreach (var y in grid[x].Keys)
+                if (square.Value.Count > 1)
                 {
-                    if (grid[x][y].Count > 1)
-                    {
-                        overlappingSquares++;
-                    }
+                    overlappingSquares++;
                 }
             }
 
             return overlappingSquares;
         }
 
-        public static int FindClaimWithoutOverlap(IEnumerable<Claim> input)
+        public static int FindClaimWithoutOverlap(IList<Claim> input, Dictionary<Coordinate, List<Claim>> grid)
         {
-            var grid = new Dictionary<int, Dictionary<int, HashSet<Claim>>>();
+            var allClaims = new HashSet<Claim>(input);
+            var overlaps = new HashSet<Claim>();
 
-            foreach (var claim in input)
+            foreach (var square in grid)
             {
-                for (var x = claim.Start.X; x < claim.Start.X + claim.SizeX; x++)
+                if (square.Value.Count > 1)
                 {
-                    if (!grid.ContainsKey(x))
+                    foreach (var overlapper in square.Value)
                     {
-                        grid[x] = new Dictionary<int, HashSet<Claim>>();
-                    }
-
-                    for (var y = claim.Start.Y; y < claim.Start.Y + claim.SizeY; y++)
-                    {
-                        if (!grid[x].ContainsKey(y))
-                        {
-                            grid[x][y] = new HashSet<Claim>();
-                        }
-
-                        grid[x][y].Add(claim);
+                        overlaps.Add(overlapper);
                     }
                 }
             }
 
-            var noOverlaps = new HashSet<int>();
-
-            foreach (var claim in input)
-            {
-                noOverlaps.Add(claim.Id);
-            }
-
-            foreach (var x in grid.Keys)
-            {
-                foreach (var y in grid[x].Keys)
-                {
-                    if (grid[x][y].Count > 1)
-                    {
-                        foreach (var overlapper in grid[x][y])
-                        {
-                            noOverlaps.Remove(overlapper.Id);
-                        }
-                    }
-                }
-            }
-
-            return noOverlaps.ToList()[0];
+            return allClaims.Except(overlaps).ToList()[0].Id;
         }
 
         public override string Answer()
         {
-            var input = Input.Select(line => new Claim(line));
-            return $"There's {CountOverlappingSquares(input)} overlapping squares, only claim #{FindClaimWithoutOverlap(input)} doesn't overlap with other claims.";
+            var input = Input.Select(line => new Claim(line)).ToList();
+            var grid = CreateGrid(input);
+            return $"There's {CountOverlappingSquares(grid)} overlapping squares, only claim #{FindClaimWithoutOverlap(input, grid)} doesn't overlap with other claims.";
         }
     }
 
@@ -132,11 +101,6 @@
 
             SizeX = Convert.ToInt32(size[0]);
             SizeY = Convert.ToInt32(size[1]);
-        }
-
-        public override string ToString()
-        {
-            return $"ID{Id}: @{Start} : {SizeX}x{SizeY}";
         }
     }
 }
