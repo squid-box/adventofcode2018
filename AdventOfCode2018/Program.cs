@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+
     using Problems;
 
     public class Program
@@ -11,14 +12,22 @@
             var problems = new List<Problem>
             {
                 new Problem1(),
-				new Problem2()
+				new Problem2(),
+                new Problem3(),
+                new Problem4()
 
             };
 
             foreach (var problem in problems)
             {
-                Console.WriteLine(problem);
-                Console.WriteLine();
+                try
+                {
+                    Console.WriteLine(problem);
+                    Console.WriteLine();
+                }
+                catch (NotImplementedException)
+                {
+                }
             }
 
 	        Console.In.ReadLine();
