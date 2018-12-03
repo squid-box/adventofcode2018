@@ -48,5 +48,12 @@ namespace AdventOfCode2018.Tests.Problems
             var claims = TestInput.Select(x => new Claim(x));
             Assert.AreEqual(4, Problem3.CountOverlappingSquares(claims));
         }
+
+        [Test]
+        public void FindClaimWithoutOverlapTest()
+        {
+            var claims = TestInput.Select(x => new Claim(x));
+            Assert.AreEqual(3, Problem3.FindClaimWithoutOverlap(claims));
+        }
     }
 }
