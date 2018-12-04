@@ -19,14 +19,16 @@
             return output;
         }
 
-        public static SleepLog ReadLogs(IList<Log> sortedLogs)
+        public static SleepLog ReadLogs(IList<string> input)
         {
+            var logs = ParseInput(input);
+
             var sleepLog = new SleepLog();
 
             var currentId = -1;
             var fellAsleep = -1;
 
-            foreach (var log in sortedLogs)
+            foreach (var log in logs)
             {
                 if (log.Message.Contains("begins shift"))
                 {
@@ -86,20 +88,18 @@
 
             foreach (var guard in sleepLog.MinuteAsleep.Keys)
             {
-                var mostFrequentMinute = sleepLog.MinuteAsleep[guard].Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+                var mostFrequentMinute = sleepLog.MinuteAsleep[guard].Aggregate((l, r) => l.Value > r.Value ? l : r).Value;
                 guardMax.Add(guard, mostFrequentMinute);
             }
 
             var winner = guardMax.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
 
             return winner * sleepLog.MinuteAsleep[winner].Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
-            // Too low : 4424
         }
 
         public override string Answer()
         {
-            var sortedLogs = ParseInput(Input);
-            var sleepLog = ReadLogs(sortedLogs);
+            var sleepLog = ReadLogs(Input);
             return $"Strategy 1 gives: {Strategy1(sleepLog)}.\nStrategy 2 gives: {Strategy2(sleepLog)}.";
         }
     }
