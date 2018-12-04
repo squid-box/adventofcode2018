@@ -60,14 +60,16 @@
         public void Strategy1Test()
         {
             var sortedLogs = Problem4.ParseInput(TestInput);
-            Assert.AreEqual(240, Problem4.Strategy1(sortedLogs));
+            var sleepLog = Problem4.ReadLogs(sortedLogs);
+            Assert.AreEqual(240, Problem4.Strategy1(sleepLog));
         }
 
         [Test]
         public void Strategy2Test()
         {
             var sortedLogs = Problem4.ParseInput(TestInput);
-            Assert.AreEqual(4455, Problem4.Strategy2(sortedLogs));
+            var sleepLog = Problem4.ReadLogs(sortedLogs);
+            Assert.AreEqual(4455, Problem4.Strategy2(sleepLog));
         }
     }
 }

@@ -19,13 +19,9 @@
             return output;
         }
 
-        public static int Strategy1(IList<Log> sortedLogs)
+        public static SleepLog ReadLogs(IList<Log> sortedLogs)
         {
-            // (Guard : Total Slept minutes)
-            var totalSleepLog = new Dictionary<int, int>();
-
-            // (Guard : (Minute : TimesSlept))
-            var minuteSleepLog = new Dictionary<int, Dictionary<int, int>>();
+            var sleepLog = new SleepLog();
 
             var currentId = -1;
             var fellAsleep = -1;
@@ -48,48 +44,63 @@
                 {
                     var wokeUp = log.TimeStamp.Minute;
 
-                    if (!minuteSleepLog.ContainsKey(currentId))
+                    if (!sleepLog.MinuteAsleep.ContainsKey(currentId))
                     {
-                        minuteSleepLog.Add(currentId, new Dictionary<int, int>());
+                        sleepLog.MinuteAsleep.Add(currentId, new Dictionary<int, int>());
                     }
 
                     for (var t = fellAsleep; t < wokeUp; t++)
                     {
-                        if (!minuteSleepLog[currentId].ContainsKey(t))
+                        if (!sleepLog.MinuteAsleep[currentId].ContainsKey(t))
                         {
-                            minuteSleepLog[currentId].Add(t, 0);
+                            sleepLog.MinuteAsleep[currentId].Add(t, 0);
                         }
 
-                        minuteSleepLog[currentId][t]++;
+                        sleepLog.MinuteAsleep[currentId][t]++;
                     }
 
-                    if (!totalSleepLog.ContainsKey(currentId))
+                    if (!sleepLog.TotalSleep.ContainsKey(currentId))
                     {
-                        totalSleepLog.Add(currentId, 0);
+                        sleepLog.TotalSleep.Add(currentId, 0);
                     }
 
-                    totalSleepLog[currentId] += wokeUp - fellAsleep;
+                    sleepLog.TotalSleep[currentId] += wokeUp - fellAsleep;
                 }
             }
 
-            var biggestSleeper = totalSleepLog.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
-            var mostSleptMinute = minuteSleepLog[biggestSleeper].Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+            return sleepLog;
+        }
 
+        public static int Strategy1(SleepLog sleepLog)
+        {
+            var biggestSleeper = sleepLog.TotalSleep.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+            var mostSleptMinute = sleepLog.MinuteAsleep[biggestSleeper].Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
 
             return biggestSleeper * mostSleptMinute;
         }
 
-        public static int Strategy2(IList<Log> sortedLogs)
+        public static int Strategy2(SleepLog sleepLog)
         {
+            // (Guard ID : Most frequent minute
+            var guardMax = new Dictionary<int, int>();
 
+            foreach (var guard in sleepLog.MinuteAsleep.Keys)
+            {
+                var mostFrequentMinute = sleepLog.MinuteAsleep[guard].Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+                guardMax.Add(guard, mostFrequentMinute);
+            }
 
-            return 0;
+            var winner = guardMax.Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+
+            return winner * sleepLog.MinuteAsleep[winner].Aggregate((l, r) => l.Value > r.Value ? l : r).Key;
+            // Too low : 4424
         }
 
         public override string Answer()
         {
             var sortedLogs = ParseInput(Input);
-            return $"Strategy 1 gives: {Strategy1(sortedLogs)}";
+            var sleepLog = ReadLogs(sortedLogs);
+            return $"Strategy 1 gives: {Strategy1(sleepLog)}.\nStrategy 2 gives: {Strategy2(sleepLog)}.";
         }
     }
 
@@ -129,6 +140,25 @@
         {
             var other = (Log) obj;
             return TimeStamp.CompareTo(other.TimeStamp);
+        }
+    }
+
+    public class SleepLog
+    {
+        /// <summary>
+        /// (Guard ID : Total Minutes Slept)
+        /// </summary>
+        public Dictionary<int, int> TotalSleep { get; }
+
+        /// <summary>
+        /// (Guard ID : (Minute : TimesSlept))
+        /// </summary>
+        public Dictionary<int, Dictionary<int, int>> MinuteAsleep { get; }
+
+        public SleepLog()
+        {
+            TotalSleep = new Dictionary<int, int>();
+            MinuteAsleep = new Dictionary<int, Dictionary<int, int>>();
         }
     }
 }
