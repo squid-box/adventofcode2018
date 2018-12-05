@@ -1,6 +1,8 @@
 ﻿namespace AdventOfCode2018.Problems
 {
+    using System.Collections.Concurrent;
     using System.Linq;
+    using System.Threading.Tasks;
 
     public class Problem5 : Problem
     {
@@ -37,21 +39,17 @@
 
         public static int FindBestReduction(string input)
         {
-            var minVal = int.MaxValue;
+            var lengths = new ConcurrentBag<int>();
 
-            for (var ascii = 97; ascii < 123; ascii++)
+            Parallel.For(97, 123, ascii =>
             {
-                var targetChar = (char) ascii;
+                var targetChar = (char)ascii;
                 var newInput = input.Replace(targetChar.ToString(), "").Replace(char.ToUpper(targetChar).ToString(), "");
 
-                var length = PerformReaction(newInput);
-                if (length < minVal)
-                {
-                    minVal = length;
-                }
-            }
+                lengths.Add(PerformReaction(newInput));
+            });
 
-            return minVal;
+            return lengths.Min();
         }
 
         public override string Answer()
