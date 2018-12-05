@@ -14,7 +14,8 @@
                 new Problem1(),
 				new Problem2(),
                 new Problem3(),
-                new Problem4()
+                new Problem4(),
+                new Problem5()
 
             };
 
@@ -22,7 +23,11 @@
             {
                 try
                 {
-                    Console.WriteLine(problem);
+                    var startTime = DateTime.Now;
+                    var answer = problem.ToString();
+                    var endTime = DateTime.Now;
+                    Console.WriteLine(answer);
+                    Console.WriteLine($"Calculated in {(endTime-startTime).TotalMilliseconds}ms.");
                     Console.WriteLine();
                 }
                 catch (NotImplementedException)
