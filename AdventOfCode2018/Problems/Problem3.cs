@@ -1,7 +1,9 @@
 ﻿namespace AdventOfCode2018.Problems
 {
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
+    using System.Threading.Tasks;
     using System.Linq;
 
     using Utils;
@@ -14,9 +16,9 @@
 
         public static Dictionary<Coordinate, List<Claim>> CreateGrid(IList<Claim> input)
         {
-            var grid = new Dictionary<Coordinate, List<Claim>>();
+            var grid = new ConcurrentDictionary<Coordinate, List<Claim>>();
 
-            foreach (var claim in input)
+            Parallel.ForEach(input, claim =>
             {
                 for (var x = claim.Start.X; x < claim.Start.X + claim.SizeX; x++)
                 {
@@ -27,13 +29,13 @@
                         {
                             grid[coord] = new List<Claim>();
                         }
-                        
+
                         grid[coord].Add(claim);
                     }
                 }
-            }
+            });
 
-            return grid;
+            return new Dictionary<Coordinate, List<Claim>>(grid);
         }
 
         public static int CountOverlappingSquares(Dictionary<Coordinate, List<Claim>> grid)
