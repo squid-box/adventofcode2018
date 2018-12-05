@@ -10,7 +10,7 @@
         {
         }
 
-        public static int PerformReaction(string polymer)
+        public static string PerformReaction(string polymer)
         {
             var units = polymer.ToList();
             var listChanged = true;
@@ -34,7 +34,7 @@
                 }
             }
 
-            return units.Count;
+            return new string(units.ToArray());
         }
 
         public static int FindBestReduction(string input)
@@ -46,7 +46,7 @@
                 var targetChar = (char)ascii;
                 var newInput = input.Replace(targetChar.ToString(), "").Replace(char.ToUpper(targetChar).ToString(), "");
 
-                lengths.Add(PerformReaction(newInput));
+                lengths.Add(PerformReaction(newInput).Length);
             });
 
             return lengths.Min();
@@ -54,7 +54,10 @@
 
         public override string Answer()
         {
-            return $"After reactions are done {PerformReaction(Input[0])} units remain.\nMost efficient reduction leaves {FindBestReduction(Input[0])} units.";
+            var part1 = PerformReaction(Input[0]);
+            var part2 = FindBestReduction(part1);
+
+            return $"After reactions are done {part1.Length} units remain.\nMost efficient reduction leaves {part2} units.";
         }
     }
 }
