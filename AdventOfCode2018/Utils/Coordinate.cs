@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode2018.Utils
+﻿using System;
+
+namespace AdventOfCode2018.Utils
 {
     public class Coordinate
     {
@@ -26,6 +28,16 @@
         public override int GetHashCode()
         {
             return X.GetHashCode() + Y.GetHashCode();
+        }
+
+        public static int ManhattanDistance(Coordinate origin, Coordinate destination)
+        {
+            if (origin.Equals(destination))
+            {
+                return 0;
+            }
+
+            return Math.Abs((destination.X - origin.X) + (destination.Y - origin.Y));
         }
     }
 }

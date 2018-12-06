@@ -15,7 +15,12 @@
 				new Problem2(),
                 new Problem3(),
                 new Problem4(),
-                new Problem5()
+                new Problem5(),
+                new Problem6(),
+                new Problem7(),
+                new Problem8(),
+                new Problem9(),
+                new Problem10()
 
             };
 
