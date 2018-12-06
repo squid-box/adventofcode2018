@@ -37,7 +37,7 @@ namespace AdventOfCode2018.Utils
                 return 0;
             }
 
-            return Math.Abs((destination.X - origin.X) + (destination.Y - origin.Y));
+            return Math.Abs(destination.X - origin.X) + Math.Abs(destination.Y - origin.Y);
         }
     }
 }
