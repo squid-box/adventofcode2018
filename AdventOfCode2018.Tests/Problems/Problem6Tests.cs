@@ -30,5 +30,12 @@ namespace AdventOfCode2018.Tests.Problems
             var coordinates = Problem6.ParseInput(TestInput);
             Assert.AreEqual(17, Problem6.FindLargestArea(coordinates));
         }
+
+        [Test]
+        public void FindSizeOfSafeRegionTest()
+        {
+            var coordinates = Problem6.ParseInput(TestInput);
+            Assert.AreEqual(16, Problem6.FindSizeOfSafeRegion(coordinates));
+        }
     }
 }

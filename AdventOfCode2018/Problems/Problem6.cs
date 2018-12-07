@@ -79,6 +79,11 @@
             return finiteRegions.Max(x => x.Count);
         }
 
+        public static int FindSizeOfSafeRegion(ICollection<Coordinate> coordinates)
+        {
+            return 0;
+        }
+
         private static Coordinate FindClosestCoordinate(Coordinate origin, ICollection<Coordinate> potentialCoordinates)
         {
             var distances = new SortedDictionary<int, List<Coordinate>>();
@@ -101,6 +106,12 @@
             }
 
             return distances[distances.Keys.First()].First();
+        }
+
+        public static int FindSizeOfSafeRegion(IList<Coordinate> coordinates)
+        {
+
+            return 0;
         }
 
         public override string Answer()
