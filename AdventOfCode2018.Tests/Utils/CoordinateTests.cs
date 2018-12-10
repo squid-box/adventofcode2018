@@ -37,5 +37,15 @@ namespace AdventOfCode2018.Tests.Utils
             Assert.IsTrue(_coord1.Equals(_coord2));
             Assert.IsFalse(_coord1.Equals(_coord3));
         }
+
+        [Test]
+        public void AddVectorTest()
+        {
+            _coord1.AddVector(new Vector(1, 1));
+            Assert.AreEqual(new Coordinate(1,1), _coord1);
+
+            _coord3.AddVector(new Vector(-5, -5));
+            Assert.AreEqual(new Coordinate(-3, -5), _coord3);
+        }
     }
 }

@@ -4,14 +4,20 @@ namespace AdventOfCode2018.Utils
 {
     public class Coordinate
     {
-        public int X { get; }
+        public int X { get; private set; }
         
-        public int Y { get; }
+        public int Y { get; private set; }
 
         public Coordinate(int x, int y)
         {
             X = x;
             Y = y;
+        }
+
+        public void AddVector(Vector vector)
+        {
+            X += vector.X;
+            Y += vector.Y;
         }
 
         public override string ToString()
