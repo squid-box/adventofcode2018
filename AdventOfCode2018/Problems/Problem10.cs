@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Text.RegularExpressions;
-using AdventOfCode2018.Utils;
-
-namespace AdventOfCode2018.Problems
+﻿namespace AdventOfCode2018.Problems
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Text.RegularExpressions;
+
+    using Utils;
 
     public class Problem10 : Problem
     {
@@ -13,73 +14,102 @@ namespace AdventOfCode2018.Problems
         {
         }
 
-        public static Dictionary<Coordinate, Light> ParseInput(IEnumerable<string> input)
+        public static List<Light> ParseInput(IEnumerable<string> input)
         {
-            var output = new Dictionary<Coordinate, Light>();
+            var output = new List<Light>();
 
             foreach (var line in input)
             {
-                var light = new Light(line);
-                output.Add(light.Position, light);
+                output.Add(new Light(line));
             }
 
             return output;
         }
 
-        public static Dictionary<Coordinate, Light> StateAfterIterations(Dictionary<Coordinate, Light> lights, int iterations)
+        public static List<Light> IncrementLights(List<Light> lights)
         {
-            for (var i = 0; i <= iterations; i++)
+            foreach (var light in lights)
             {
-                foreach (var light in lights)
-                {
-                    light.Value.IncrementPosition();
-                }
+                light.IncrementPosition();
             }
 
             return lights;
         }
 
-        public static void PrintState(Dictionary<Coordinate, Light> lights)
+        public static List<Light> DecrementLights(List<Light> lights)
         {
-            var xCorrection = -lights.Keys.Min(x => x.X);
-            var yCorrection = -lights.Keys.Min(y => y.Y);
-
-            var maxX = lights.Keys.Max(x => x.X);
-            var maxY = lights.Keys.Max(y => y.Y);
-
-            Console.WriteLine($"Correction: X={xCorrection} , Y={yCorrection}");
-            Console.WriteLine($"Max: X={maxX} , Y={maxY}");
-
-            var numberOfLightsPrinted = 0;
-
-            for (var y = 0; y < maxY + yCorrection; y++)
+            foreach (var light in lights)
             {
-                for (var x = 0; x < maxX + xCorrection; x++)
-                {
-                    if (lights.ContainsKey(new Coordinate(x - xCorrection, y - yCorrection)))
-                    {
-                        Console.Write("#");
-                        numberOfLightsPrinted++;
-                    }
-                    else
-                    {
-                        Console.Write(".");
-                    }
-                }
-
-                Console.WriteLine();
+                light.DecrementPosition();
             }
 
-            Console.WriteLine($"Printed {numberOfLightsPrinted}/{lights.Count} lights.");
+            return lights;
+        }
+
+        public static string GenerateImage(List<Light> lights)
+        {
+            var previousBoundingBox = new BoundingBox(100000, 10000);
+            var boundingBox = new BoundingBox(lights);
+
+            var iterations = 0;
+
+            // Iterate as long as bounding box shrinks.
+            while (boundingBox.Size() <= previousBoundingBox.Size() || boundingBox.Height > 20)
+            {
+                IncrementLights(lights);
+                previousBoundingBox = boundingBox;
+                boundingBox = new BoundingBox(lights);
+                iterations++;
+            }
+
+            // Rollback to previous iteration.
+            DecrementLights(lights);
+
+            Console.WriteLine($"Bounding box started growing after {iterations - 1} iterations.");
+
+            // Generate image
+            var sb = new StringBuilder();
+
+            var lightCollection = new Dictionary<Coordinate, Light>();
+
+            foreach (var light in lights)
+            {
+                try
+                {
+                    lightCollection.Add(light.Position, light);
+                }
+                catch (ArgumentException)
+                {
+                    // Don't care if two lights are in the same position (shine twice as bright?)
+                }
+            }
+
+            Console.WriteLine($"Drawing image in bounding box: {boundingBox}...");
+
+            for (var y = 0; y < boundingBox.Height; y++)
+            {
+                for (var x = 0; x < boundingBox.Width; x++)
+                {
+                    sb.Append(lightCollection.ContainsKey(new Coordinate(x - boundingBox.Origin.X - 2, y - boundingBox.Origin.Y - 2)) ? '#' : '.');
+                }
+
+                sb.AppendLine();
+            }
+
+            return sb.ToString();
         }
 
         public override string Answer()
         {
-            return "";
+            var lights = ParseInput(Input);
+
+            var image = GenerateImage(lights);
+
+            return image;
         }
     }
 
-    public struct Light
+    public class Light
     {
         public Coordinate Position { get; }
 
@@ -96,7 +126,49 @@ namespace AdventOfCode2018.Problems
         {
             Position.AddVector(Velocity);
         }
+
+        public void DecrementPosition()
+        {
+            Position.SubtractVector(Velocity);
+        }
+
+        public override string ToString()
+        {
+            return $"Light: Pos={Position}, Vel={Velocity}";
+        }
     }
 
-    
+    public class BoundingBox
+    {
+        public int Width { get; }
+        public int Height { get; }
+
+        public Coordinate Origin { get; }
+
+        public BoundingBox(IList<Light> lights)
+        {
+            var minX = lights.Min(x => x.Position.X);
+            var minY = lights.Min(y => y.Position.Y);
+
+            Width = lights.Max(x => x.Position.X) - minX;
+            Height = lights.Max(y => y.Position.Y) - minY;
+            Origin = new Coordinate(minX, minY);
+        }
+
+        public BoundingBox(int width, int height)
+        {
+            Width = width;
+            Height = height;
+        }
+
+        public int Size()
+        {
+            return Width * Height;
+        }
+
+        public override string ToString()
+        {
+            return $"Box: ({Width}x{Height})";
+        }
+    }
 }

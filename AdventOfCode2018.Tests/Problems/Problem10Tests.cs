@@ -51,30 +51,23 @@ namespace AdventOfCode2018.Tests.Problems
             var parsedInput = Problem10.ParseInput(TestInput);
 
             var coord1 = new Coordinate(9, 1);
-            Assert.IsTrue(parsedInput.ContainsKey(coord1));
-            Assert.AreEqual(new Coordinate(9, 1), parsedInput[coord1].Position);
-            Assert.AreEqual(new Vector(0, 2), parsedInput[coord1].Velocity);
+            Assert.AreEqual(new Coordinate(9, 1), parsedInput[0].Position);
+            Assert.AreEqual(new Vector(0, 2), parsedInput[0].Velocity);
 
             var coord2 = new Coordinate(10, -3);
-            Assert.IsTrue(parsedInput.ContainsKey(coord2));
-            Assert.AreEqual(new Coordinate(10, -3), parsedInput[coord2].Position);
-            Assert.AreEqual(new Vector(-1, 1), parsedInput[coord2].Velocity);
+            Assert.AreEqual(new Coordinate(10, -3), parsedInput[12].Position);
+            Assert.AreEqual(new Vector(-1, 1), parsedInput[12].Velocity);
         }
 
         [Test]
-        public void Test()
+        public void GenerateImageTest()
         {
             var lights = Problem10.ParseInput(TestInput);
-            Problem10.PrintState(lights);
-
-            Console.ReadLine();
-
-            while (true)
-            {
-                Problem10.StateAfterIterations(lights, 1);
-                Problem10.PrintState(lights);
-                Console.ReadLine();
-            }
+            var image = Problem10.GenerateImage(lights);
+            Console.Error.WriteLine(image);
+            Assert.IsTrue(image.Contains("#...#..###"));
+            Assert.IsTrue(image.Contains("#...#...#"));
+            Assert.IsTrue(image.Contains("#####...#"));
         }
     }
 }

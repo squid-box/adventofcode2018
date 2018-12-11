@@ -20,6 +20,12 @@ namespace AdventOfCode2018.Utils
             Y += vector.Y;
         }
 
+        public void SubtractVector(Vector vector)
+        {
+            X -= vector.X;
+            Y -= vector.Y;
+        }
+
         public override string ToString()
         {
             return $"({X},{Y})";
