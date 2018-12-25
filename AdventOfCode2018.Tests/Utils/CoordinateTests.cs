@@ -3,6 +3,7 @@ using AdventOfCode2018.Utils;
 
 namespace AdventOfCode2018.Tests.Utils
 {
+    using System;
     using NUnit.Framework;
 
     [TestFixture]
@@ -46,6 +47,23 @@ namespace AdventOfCode2018.Tests.Utils
 
             _coord3.AddVector(new Vector(-5, -5));
             Assert.AreEqual(new Coordinate(-3, -5), _coord3);
+        }
+
+        [Test]
+        public void NeighboursTest()
+        {
+            var n1 = _coord1.Neighbours(int.MinValue, int.MaxValue, int.MinValue, int.MaxValue);
+
+            Assert.AreEqual(8, n1.Count);
+            Assert.IsTrue(n1.Contains(new Coordinate(-1, -1)));
+            Assert.IsTrue(n1.Contains(new Coordinate(1, 1)));
+            Assert.IsFalse(n1.Contains(_coord1));
+
+            var n2 = _coord1.Neighbours(0, int.MaxValue, 0, int.MaxValue);
+            Assert.AreEqual(3, n2.Count);
+            Assert.IsFalse(n2.Contains(new Coordinate(-1, -1)));
+            Assert.IsTrue(n2.Contains(new Coordinate(1, 1)));
+            Assert.IsFalse(n2.Contains(_coord1));
         }
     }
 }
