@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
     using Utils;
 
     public class Problem18 : Problem
@@ -10,34 +11,17 @@
         {
         }
 
-        public static LumberCollectionArea ParseInput(IList<string> input)
-        {
-            return new LumberCollectionArea(input);
-        }
-
-        public static int FindResourceValue(LumberCollectionArea input)
-        {
-            input.UpdateCounts();
-            return input.Trees * input.Lumberyards;
-        }
-
         public override string Answer()
         {
-            var input = ParseInput(Input);
+            var input = new LumberCollectionArea(Input);
 
-            for (var i = 0; i < 10; i++)
-            {
-                input.Iterate();
-            }
+            input.Iterate(10);
 
-            var part1 = FindResourceValue(input);
+            var part1 = input.ResourceValue;
 
-            for (var i = 0; i < 999999990; i++)
-            {
-                input.Iterate();
-            }
+            input.Iterate(1000000000);
 
-            var part2 = FindResourceValue(input);
+            var part2 = input.ResourceValue;
 
             return $"After 10 minutes the value of resources is {part1},\nAfter 1 000 000 000 minutes the value of resources is {part2}.";
         }
@@ -54,6 +38,15 @@
         public int Trees { get; private set; }
 
         public Acre[,] Acres { get; private set; }
+
+        public int ResourceValue
+        {
+            get
+            {
+                UpdateCounts();
+                return Trees * Lumberyards;
+            }
+        }
 
         public LumberCollectionArea(IList<string> input)
         {
@@ -86,23 +79,48 @@
             }
         }
 
-        public void Iterate()
+        public void Iterate(int iterations)
         {
-            var newState = new Acre[Width,Height];
-            Array.Copy(Acres, 0, newState, 0, Acres.Length);
+            var previousStates = new HashSet<LumberCollectionArea>();
+            var sequence = new List<LumberCollectionArea>();
+            var cycle = 0;
 
-            for (var y = 0; y < Height; y++)
+            previousStates.Add(this);
+
+            var foundLoop = false;
+
+            for (var i = 0; i < iterations; i++)
             {
-                for (var x = 0; x < Width; x++)
+                var newState = new Acre[Width, Height];
+                Array.Copy(Acres, 0, newState, 0, Acres.Length);
+
+                for (var y = 0; y < Height; y++)
                 {
-                    newState[x, y] = EvaluateAcre(x, y);
+                    for (var x = 0; x < Width; x++)
+                    {
+                        newState[x, y] = EvaluateAcre(x, y);
+                    }
                 }
+
+                Acres = newState;
+
+                if (previousStates.Contains(this))
+                {
+                    foundLoop = true;
+                    cycle = previousStates.Count;
+                }
+
+                previousStates.Add(this);
+                sequence.Add(this);
             }
 
-            Acres = newState;
+            if (foundLoop)
+            {
+                var state = sequence.Last();
+            }
         }
 
-        public void UpdateCounts()
+        private void UpdateCounts()
         {
             Lumberyards = 0;
             Trees = 0;
@@ -153,6 +171,44 @@
                 default:
                     return neighbouringLumberyards >= 3 ? Acre.Lumberyard : Acre.Trees;
             }
+        }
+
+        public override bool Equals(object obj)
+        {
+            var other = (LumberCollectionArea) obj;
+
+            if (Width != other.Width || Height != Height)
+            {
+                return false;
+            }
+
+            for (var y = 0; y < Height; y++)
+            {
+                for (var x = 0; x < Width; x++)
+                {
+                    if (Acres[x, y] != other.Acres[x, y])
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            var hash = 0;
+
+            for (var y = 0; y < Height; y++)
+            {
+                for (var x = 0; x < Width; x++)
+                {
+                    hash += Acres[x, y].GetHashCode();
+                }
+            }
+
+            return hash;
         }
     }
 

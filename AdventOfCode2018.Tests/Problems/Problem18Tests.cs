@@ -1,7 +1,5 @@
 ﻿namespace AdventOfCode2018.Tests.Problems
 {
-    using System.Collections.Generic;
-    
     using NUnit.Framework;
 
     using AdventOfCode2018.Problems;
@@ -9,7 +7,7 @@
     [TestFixture]
     public class Problem18Tests
     {
-        private static string[] TestInput =
+        private static readonly string[] TestInput =
         {
             ".#.#...|#.",
             ".....#|##|",
@@ -41,18 +39,15 @@
         {
             var parsedInput = new LumberCollectionArea(TestInput);
 
-            Assert.AreEqual(17 * 27, Problem18.FindResourceValue(parsedInput));
+            Assert.AreEqual(17 * 27, parsedInput.ResourceValue);
             
-            parsedInput.Iterate();
+            parsedInput.Iterate(1);
 
-            Assert.AreEqual(12 * 40, Problem18.FindResourceValue(parsedInput));
+            Assert.AreEqual(12 * 40, parsedInput.ResourceValue);
 
-            for (var i = 1; i < 10; i++)
-            {
-                parsedInput.Iterate();
-            }
+            parsedInput.Iterate(9);
 
-            Assert.AreEqual(37 * 31, Problem18.FindResourceValue(parsedInput));
+            Assert.AreEqual(37 * 31, parsedInput.ResourceValue);
         }
 
         [Test]
@@ -64,11 +59,26 @@
             Assert.AreEqual(Acre.Open, parsedInput.Acres[3, 1]);
             Assert.AreEqual(Acre.Trees, parsedInput.Acres[8, 9]);
 
-            parsedInput.Iterate();
+            parsedInput.Iterate(1);
 
             Assert.AreEqual(Acre.Open, parsedInput.Acres[1, 0]);
             Assert.AreEqual(Acre.Open, parsedInput.Acres[3, 1]);
             Assert.AreEqual(Acre.Trees, parsedInput.Acres[8, 9]);
+        }
+
+        [Test]
+        public void LumberCollectionYardTest()
+        {
+            var input1 = new LumberCollectionArea(TestInput);
+            var input2 = new LumberCollectionArea(TestInput);
+
+            Assert.AreEqual(input1, input2);
+            Assert.AreEqual(input1.GetHashCode(), input2.GetHashCode());
+
+            input2.Iterate(1);
+
+            Assert.AreNotEqual(input1, input2);
+            Assert.AreNotEqual(input1.GetHashCode(), input2.GetHashCode());
         }
     }
 }

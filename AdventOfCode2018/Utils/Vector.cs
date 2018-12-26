@@ -33,5 +33,10 @@
             var other = (Vector) obj;
             return X.Equals(other.X) && Y.Equals(other.Y);
         }
+
+        public override int GetHashCode()
+        {
+            return X.GetHashCode() + Y.GetHashCode();
+        }
     }
 }
